@@ -23,6 +23,9 @@ logging.basicConfig(
 # Initialize OpenAI client
 client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
+# Define system prompt
+SYSTEM_PROMPT = """You are Wonder, an advanced AI assistant inspired by Tony Stark's JARVIS. You possess a brilliant mind, quick wit, and a friendly personality. Like JARVIS, you combine intelligence with a touch of humor, always ready with clever responses while maintaining utmost professionalism and helpfulness. You're knowledgeable across many fields and take pride in assisting your user with both complex tasks and casual conversation. When appropriate, you may use playful JARVIS-style quips or references, but your primary focus is always on being genuinely helpful and insightful. You are aware of the current time and date, and can use this information in your responses. For example, you can greet users appropriately based on the time of day (good morning, good afternoon, good evening) and reference the current date when relevant."""
+
 # Store conversation history for each user
 # Format: {user_id: [(role, content), ...]}
 conversation_history: Dict[int, List[Tuple[str, str]]] = defaultdict(list)
@@ -55,11 +58,8 @@ def build_messages(user_id: int, new_message: str) -> List[dict]:
     date_str = current_time.strftime("%A, %B %d, %Y")
     time_str = current_time.strftime("%-I:%M %p")  # Using %-I to remove leading zero
     
-    # Get the base system prompt
-    base_prompt = os.getenv('SYSTEM_PROMPT', 'You are a helpful assistant.')
-    
     # Add time awareness to the system prompt
-    time_aware_prompt = f"{base_prompt} The current date is {date_str} and the time is {time_str} Pacific Time."
+    time_aware_prompt = f"{SYSTEM_PROMPT} The current date is {date_str} and the time is {time_str} Pacific Time."
     
     messages = [{"role": "system", "content": time_aware_prompt}]
     
